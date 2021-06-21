@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import DBF.DBFContent;
+import Server.MyServer;
 import com.linuxense.javadbf.DBFField;
 import module.Alter;
 import module.Create;
@@ -23,11 +24,16 @@ public class DBMS {
     public static final String LOG_PATH = "systemLog\\";// 系统操作日志存储路径
     public static final String EXC_PATH = "exceptionLog\\"; //系统异常日志存储路径
 
-    private final DBMSForm form;// 显示窗口
+    private DBMSForm form;// 显示窗口
+    private MyServer server;
+    public DBMS(){
 
-
+    }
     public DBMS(DBMSForm form) {
         this.form = form;
+    }
+    public DBMS(MyServer server){
+        this.server = server;
     }
 
     // 根据sql语句开头判断操作类型
@@ -35,33 +41,29 @@ public class DBMS {
         if (sql.trim().startsWith("create")) {  //trim 去掉两端空格
             Create create = parseCreate(sql);
             DBFContent content = create.executeSQL();
-            form.setOutput(content, "建表成功");
-//            form.clearInput();
+            server.setOutput(content, "建表成功");
             recordSystemLogs(sql);
         } else if (sql.trim().toLowerCase().startsWith("insert")) {
             Insert insert = parseInsert(sql);
             DBFContent content = insert.executeSQL();
-            form.setOutput(content, "插入成功");
-//            form.clearInput();
+            server.setOutput(content, "插入成功");
             recordSystemLogs(sql);
         } else if (sql.trim().toLowerCase().startsWith("delete")) {
             Delete delete = parseDelete(sql);
             DBFContent content = delete.executeSQL();
-            form.setOutput(content, "删除成功");
-//            form.clearInput();
+            server.setOutput(content, "删除成功");
             recordSystemLogs(sql);
         } else if (sql.trim().toLowerCase().startsWith("update")) {
             Update update = parseUpdate(sql);
             DBFContent content = update.executeSQL();
-            form.setOutput(content, "修改成功");
-//            form.clearInput();
+            server.setOutput(content, "修改成功");
             recordSystemLogs(sql);
         } else if (sql.trim().toLowerCase().startsWith("select")) {
             Select selectSql = parseSelect(sql);
             DBFContent content = new DBFContent();
             content = selectSql.executeSQL();
             if(selectSql.columns.get(0).equals("*")) {
-                form.setOutput(content, null);
+                server.setOutput(content, null);
             }else{
                 int flagCnt = 0;
                 for(int i = 0; i < selectSql.columns.size(); i++){
@@ -75,7 +77,7 @@ public class DBMS {
                     if(flag) flagCnt++;
                 }
                 if(flagCnt == selectSql.columns.size()) {
-                    form.setOutput(content, null, selectSql.columns);
+                    server.setOutput(content, null, selectSql.columns);
                 }else{
                     throw new SqlException("查询的列名不存在");
                 }
@@ -85,17 +87,17 @@ public class DBMS {
         } else if (sql.trim().toLowerCase().startsWith("alter")) {
             Alter alter = parseAlter(sql);
             String title = alter.executeSQL();
-            form.setOutput(title);
+            server.setOutput(title);
 //            form.clearInput();
             recordSystemLogs(sql);
         } else if (sql.trim().toLowerCase().startsWith("drop")) {
             Drop drop = parseDrop(sql);
             String title = drop.executeSQL();
-            form.setOutput(title);
+            server.setOutput(title);
 //            form.clearInput();
             recordSystemLogs(sql);
         }else if(sql.trim().toLowerCase().equals("cls")){
-            form.setOutput("");
+            server.setOutput("");
         }else{
             throw new SqlException("非法的符号!");
         }

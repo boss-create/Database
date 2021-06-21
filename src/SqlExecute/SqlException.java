@@ -5,10 +5,8 @@ package SqlExecute;
 
 public class SqlException extends Exception {
 
-    public String exception;
-
-    public SqlException(String string) {
-        exception = string;
+    public SqlException(String message) {
+        super(message);
     }
 
 }

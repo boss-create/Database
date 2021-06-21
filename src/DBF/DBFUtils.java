@@ -102,6 +102,7 @@ public class DBFUtils {
                     Object value = record.get(field);
                     if(dbfContent.getFields().get(j).getDataType() == DBFField.FIELD_TYPE_F) {
                         value = Double.parseDouble(record.get(field).toString());
+
                     }else if(dbfContent.getFields().get(j).getDataType() == DBFField.FIELD_TYPE_N){
                         System.out.print("record:"+record.get(field)+" ");
                         DecimalFormat df = new DecimalFormat("#.##");

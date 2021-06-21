@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 public class TestSelect {
     public static void main(String[] args) {
-//        String sql = " select * from  student ,  sc Condition sage>= 20 and sage <=21 order by sno, sage desc ; ";
-        String sql = "select * from person where age = 20;";
+        String sql = " select * from  student ,  sc Condition sage>= 20 and sage <=21 order by sno, sage desc ; ";
+//        String sql = "select * from person where age = 20;";
         sql = sql.trim();
         sql = sql.toLowerCase();
         sql = sql.replaceAll("[\\s|,]{1,}", " ");

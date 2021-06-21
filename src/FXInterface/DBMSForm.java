@@ -26,9 +26,13 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Scanner;
 
 import static javafx.scene.text.FontWeight.NORMAL;
 
@@ -48,19 +52,19 @@ public class DBMSForm extends Application{
     private String getShowTextField;
     private Button submitButton;
     private DBMS dbms;
-    private static final DBMSForm form;
-
+    public static final DBMSForm form;
+    private Socket socket;
     static {
         form = new DBMSForm();
     }
 
-    public DBMSForm() {
-    }
+
 
     @Override
     public void start(Stage stage) throws Exception {
-
+        socket = new Socket("localhost",1004);
         dbms = new DBMS(form);
+
 
         Button button = new Button("Sign in");
         Button resetbutton = new Button("Reset");
@@ -359,15 +363,12 @@ public class DBMSForm extends Application{
                     submitButton.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent actionEvent) {
-                            String sql = inputTextField.getText(); //传入sql语句
+                            String sql =inputTextField.getSelectedText();
+                            System.out.println(sql);
                             if (sql == null || sql.length() == 0 || sql.replaceAll("\\s+","").equals("")) {
-                                showTextField.setText("请不要输入空SQL语句!");
+                                showTextField.setText("传入了无效的空语句!");
                             } else {
-                                try {
-                                    dbms.parseSQL(sql);
-                                } catch (SqlException e1) {
-                                    showTextField.setText(e1.exception);
-                                }
+                                socketClient(sql);
                             }
 
                         }
@@ -434,6 +435,17 @@ public class DBMSForm extends Application{
         showTextField.setText("------------------------------------------------------------------------------------------"
                 + output
                 + "------------------------------------------------------------------------------------------");
+    }
+
+
+    public void socketClient(String sql){
+        try {
+            PrintWriter os = new PrintWriter(socket.getOutputStream(),true);
+            os.println(sql);
+//            os.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public void setOutput(DBFContent content, String title) {

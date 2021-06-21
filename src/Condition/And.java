@@ -34,7 +34,7 @@ public class And {
     }
 
     //判断是否复合Where语句中的一个OR块条件
-    public boolean judgeAnd(Map<String, Object> record) throws SqlException {// 对Student.Sno这种模式还未处理
+    public boolean judgeAnd(Map<String, Object> record) throws SqlException {
         switch (type) {
             case BETWEEN:
                 try {
